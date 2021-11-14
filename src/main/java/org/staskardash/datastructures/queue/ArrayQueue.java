@@ -63,9 +63,6 @@ public class ArrayQueue implements Queue {
 
     @Override
     public boolean contains(Object value) {
-        if (isEmpty()) {
-            throw new IllegalStateException("Queue is empty!");
-        }
         for (int i = 0; i < size; i++) {
             Object valueInQueue = array[i];
             if (value.equals(valueInQueue)) {
@@ -79,6 +76,7 @@ public class ArrayQueue implements Queue {
     public void clear() {
         for (int i = 0; i < size; i++) {
             array[i] = null;
+            size = 0;
         }
     }
 }
