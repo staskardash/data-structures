@@ -1,11 +1,17 @@
 package org.staskardash.datastructures.list;
 
+import java.util.StringJoiner;
+
 public class ArrayList implements List{
     private Object[] array;
     private int size;
 
     ArrayList() {
     array = new Object[10];
+    }
+
+    ArrayList(int initialCapacity) {
+        array = new Object[initialCapacity];
     }
 
     @Override
@@ -18,52 +24,41 @@ public class ArrayList implements List{
     private void ensureCapacity() {
         if (array.length == size) {
             Object[] newArray = new Object[(int) (array.length * 1.5)];
-            for (int i = 0; i < size; i++) {
-            newArray[i] = array[i];
-            }
+            System.arraycopy(array, 0, newArray, 0, size);
             array = newArray;
         }
     }
 
     @Override
     public void add(Object value, int index) {
-        ensureCapacity();
-        for (int i = 0; i < size; i++) {
-            if (i == index) {
-                for (int y = size - 1; y >= i; y--) {
-                    array[y+1] = array[y];
-                }
-                array[index] = value;
-            }
+        if (index < 0) {
+            throw new IndexOutOfBoundsException ("Can't be added to a non-existent array index");
         }
+        ensureCapacity();
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = value;
         size++;
     }
 
     @Override
     public Object remove(int index) {
-        if (isEmpty()) {
-            throw new IllegalStateException ("IndexOutOfBoundsException!!!");
+        if (index >= size || index < 0 || isEmpty()) {
+            throw new IndexOutOfBoundsException ("Can't remove null value!");
         }
         Object result = array[index];
-        for(int i = 0; i < size; i++) {
-            if (i == index) {
-                array[i] = null;
-                for (int y = i; y < size; y++) {
-                    array[y] = array[y + 1];
-                }
-            }
-        }
+        System.arraycopy(array, index + 1, array, index, size - 1 - index);
+        array[size - 1] = null;
         size--;
         return result;
     }
 
     @Override
     public Object get(int index) {
-        if (isEmpty()) {
-            throw new IllegalStateException("IndexOutOfBoundsException!!!");
+        if (isEmpty() || index < 0) {
+            throw new IndexOutOfBoundsException("Can't get null value!");
         }
         Object result = array[index];
-        for(int i = 0; i < size; i++) {
+        for(int i = 0; i < array.length; i++) {
             if (i == index){
                 array[i] = null;
             }
@@ -74,8 +69,8 @@ public class ArrayList implements List{
 
     @Override
     public Object set(Object value, int index) {
-        if (isEmpty()) {
-            throw new IllegalStateException("IndexOutOfBoundException!!!");
+        if (index >= size || index < 0 || isEmpty()) {
+            throw new IndexOutOfBoundsException("Can't set null value!");
         }
         Object result = array[index];
         for (int i = 0; i < size; i++) {
@@ -106,12 +101,7 @@ public class ArrayList implements List{
 
     @Override
     public boolean contains(Object value) {
-        for (int i = 0; i < size; i++){
-            if (array[i] == value){
-                return true;
-            }
-        }
-        return false;
+        return indexOf(value) != -1;
     }
 
     @Override
@@ -136,6 +126,15 @@ public class ArrayList implements List{
             }
         }
         return -1;
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
+        for (int i = 0; i < size; i++) {
+            stringJoiner.add(array[i].toString());
+        }
+        return stringJoiner.toString();
     }
 }
 

@@ -26,6 +26,22 @@ public class ArrayListTest {
     }
 
     @Test
+    public void testAddOverInitialCapacityAndGetWorkCorrectly() {
+        ArrayList arrayList = new ArrayList(2);
+        arrayList.add("A");
+        arrayList.add("B");
+        arrayList.add("C");
+
+        assertEquals(3, arrayList.size());
+        arrayList.get(0);
+        arrayList.get(1);
+        arrayList.get(2);
+        assertEquals(0, arrayList.size());
+
+
+    }
+
+    @Test
     public void testAddOnIndexWithObjectAndGetWorkCorrectlyAndChangeSizeToZero() {
         ArrayList arrayList = new ArrayList();
         arrayList.add("A");
@@ -44,12 +60,12 @@ public class ArrayListTest {
     }
 
     @Test
-    public void testThrowIllegalStateExceptionWhenAddWithIndexBetweenTwoNull() {
+    public void testThrowIndexOutOfBoundsExceptionWhenAddWithIndexBetweenTwoNull() {
         ArrayList arrayList = new ArrayList();
         arrayList.add("A");
         arrayList.add("B");
 
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             arrayList.add("C", 3);
         });
     }
@@ -92,19 +108,19 @@ public class ArrayListTest {
     }
 
     @Test
-    public void testThrowIllegalStateExceptionWhenRemoveOnEmptyList() {
+    public void testThrowIndexOutOfBoundsExceptionWhenRemoveOnEmptyList() {
         ArrayList arrayList = new ArrayList();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             arrayList.remove(0);
         });
     }
 
     @Test
-    public void testThrowIllegalStateExceptionWhenGetOnEmptyList() {
+    public void testThrowIndexOutOfBoundsExceptionWhenGetOnEmptyList() {
         ArrayList arrayList = new ArrayList();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             arrayList.get(1);
         });
     }
@@ -125,10 +141,10 @@ public class ArrayListTest {
     }
 
     @Test
-    public void testThrowIllegalStateExceptionWhenSetonEmptyList() {
+    public void testThrowIndexOutOfBoundsExceptionWhenSetonEmptyList() {
         ArrayList arrayList = new ArrayList();
 
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             arrayList.set("A", 0);
         });
     }
@@ -233,5 +249,21 @@ public class ArrayListTest {
         assertEquals(3, arrayList.lastIndexOf("C"));
     }
 
+    @Test
+    public void testThrowIndexOutOfBoundsExceptionWhenGetLessThanZero() {
+        ArrayList arrayList = new ArrayList();
 
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            arrayList.get(-1);
+        });
+    }
+
+    @Test
+    public void testThrowIndexOutOfBoundsExceptionWhenAddLessThanZero() {
+        ArrayList arrayList = new ArrayList();
+
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            arrayList.add("A", -1);
+        });
+    }
 }
