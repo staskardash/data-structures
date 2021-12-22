@@ -1,37 +1,30 @@
 package org.staskardash.datastructures.list;
 
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.StringJoiner;
 
-public class ArrayList implements List{
-    private Object[] array;
+public class ArrayList<T> implements List<T>, Iterable<T>{
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
+    private T[] array;
     private int size;
 
     ArrayList() {
-    array = new Object[10];
+    this(DEFAULT_INITIAL_CAPACITY);
     }
 
     ArrayList(int initialCapacity) {
-        array = new Object[initialCapacity];
+        array = (T[]) new Object[initialCapacity];
     }
 
     @Override
-    public void add(Object value) {
-        ensureCapacity();
-        array[size] = value;
-        size++;
-    }
-
-    private void ensureCapacity() {
-        if (array.length == size) {
-            Object[] newArray = new Object[(int) (array.length * 1.5)];
-            System.arraycopy(array, 0, newArray, 0, size);
-            array = newArray;
-        }
+    public void add(T value) {
+        add(value, size);
     }
 
     @Override
-    public void add(Object value, int index) {
-        if (index < 0) {
+    public void add(T value, int index) {
+        if (index < 0 | index > size) {
             throw new IndexOutOfBoundsException ("Can't be added to a non-existent array index");
         }
         ensureCapacity();
@@ -41,11 +34,11 @@ public class ArrayList implements List{
     }
 
     @Override
-    public Object remove(int index) {
-        if (index >= size || index < 0 || isEmpty()) {
+    public T remove(int index) {
+        if (index >= size | index < 0 | isEmpty()) {
             throw new IndexOutOfBoundsException ("Can't remove null value!");
         }
-        Object result = array[index];
+        T result = array[index];
         System.arraycopy(array, index + 1, array, index, size - 1 - index);
         array[size - 1] = null;
         size--;
@@ -53,26 +46,25 @@ public class ArrayList implements List{
     }
 
     @Override
-    public Object get(int index) {
-        if (isEmpty() || index < 0) {
+    public T get(int index) {
+        if (isEmpty() | index < 0) {
             throw new IndexOutOfBoundsException("Can't get null value!");
         }
-        Object result = array[index];
+        T result = array[index];
         for(int i = 0; i < array.length; i++) {
             if (i == index){
                 array[i] = null;
             }
         }
-        size--;
         return result;
     }
 
     @Override
-    public Object set(Object value, int index) {
-        if (index >= size || index < 0 || isEmpty()) {
+    public T set(T value, int index) {
+        if (index >= size | index < 0 | isEmpty()) {
             throw new IndexOutOfBoundsException("Can't set null value!");
         }
-        Object result = array[index];
+        T result = array[index];
         for (int i = 0; i < size; i++) {
             if (i == index) {
                 array[i] = value;
@@ -100,15 +92,15 @@ public class ArrayList implements List{
     }
 
     @Override
-    public boolean contains(Object value) {
+    public boolean contains(T value) {
         return indexOf(value) != -1;
     }
 
     @Override
-    public int indexOf(Object value) {
+    public int indexOf(T value) {
         int index;
         for (int i = 0; i < size; i++){
-            if (array[i] == value) {
+            if (Objects.equals(array[i], value)) {
                 index = i;
                 return index;
             }
@@ -117,10 +109,10 @@ public class ArrayList implements List{
     }
 
     @Override
-    public int lastIndexOf(Object value) {
+    public int lastIndexOf(T value) {
         int index;
         for (int i = size; i >= 0; i--) {
-            if (array[i] == value) {
+            if (Objects.equals(array[i], value)) {
                 index = i;
                 return index;
             }
@@ -135,6 +127,40 @@ public class ArrayList implements List{
             stringJoiner.add(array[i].toString());
         }
         return stringJoiner.toString();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayIterator();
+    }
+
+    private void ensureCapacity() {
+        if (array.length == size) {
+            T[] newArray = (T[]) new Object[(int) (array.length * 1.5) + 1];
+            System.arraycopy(array, 0, newArray, 0, size);
+            array = newArray;
+        }
+    }
+
+    private class ArrayIterator implements Iterator<T>{
+        int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        @Override
+        public T next() {
+            T value = array[index];
+            index++;
+            return value;
+        }
+
+        @Override
+        public void remove() {
+
+        }
     }
 }
 
